@@ -5,7 +5,7 @@ import { generarJWT } from "../middlewares/validar-jwt.js";
 
 const httpAdministrador = {
   //Get all administradores
-  getTodo: async (req, res) => {
+  getAll: async (req, res) => {
     try {
       const administradores = await Administrador.find();
       res.json(administradores);

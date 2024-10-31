@@ -6,7 +6,7 @@ import validarCampos from "../middlewares/validar.js";
 const router = new Router();
 
 //Get
-router.get("/all", httpAdministrador.getTodo);
+router.get("/all", httpAdministrador.getAll);
 
 //Get by ID
 router.get("/:id", httpAdministrador.getById);

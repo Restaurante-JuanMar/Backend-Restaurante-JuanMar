@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 
 const httpContactar = {
   //Get all reservas
-  getTodo: async (req, res) => {
+  getAll: async (req, res) => {
     try {
       const contactenos = await Contactar.find();
       res.json(contactenos);
