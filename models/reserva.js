@@ -6,6 +6,7 @@ const reservaSchema = new mongoose.Schema({
   correo_cliente: { type: String, required: true },
   cedula_cliente: { type: String, required: true },
   telefono_cliente: { type: String, required: true },
+  telefono_cliente2: { type: String },
   num_personas: { type: String, required: true },
   fecha_res: { type: Date, required: true },
   mensaje_res: { type: String },

@@ -8,6 +8,10 @@ import Contactar from "./routes/contactenos.js";
 import Pqr from "./routes/pqr.js";
 import Menu from "./routes/menu.js";
 import CartaMenu from "./routes/carta_menu.js";
+import Galeria from "./routes/galeria.js";
+import ListadoPlato from "./routes/listado_platos.js";
+import PlatoEspecial from "./routes/plato_especial.js";
+import Reserva from "./routes/reserva.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -21,6 +25,10 @@ app.use("/api/contactenos", Contactar);
 app.use("/api/pqr", Pqr);
 app.use("/api/menu", Menu);
 app.use("/api/carta-menu", CartaMenu);
+app.use("/api/galeria", Galeria);
+app.use("/api/listado-plato", ListadoPlato);
+app.use("/api/plato-especial", PlatoEspecial);
+app.use("/api/reserva", Reserva);
 
 const server = http.createServer(app);
 

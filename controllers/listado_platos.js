@@ -1,4 +1,4 @@
-import ListadoPlatos from "../models/listado_plato.js";
+import ListadoPlatos from "../models/listado_platos.js";
 
 const httpListadoPlatos = {
   // Obtener todos los documentos de ListadoPlatos
