@@ -42,7 +42,6 @@ const httpAdministrador = {
         nombre: mayusNombre,
         apellido: mayusApellido,
         cedula,
-        rol,
         correo,
         telefono,
         password,
