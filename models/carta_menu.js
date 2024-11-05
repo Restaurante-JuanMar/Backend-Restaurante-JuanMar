@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const cartaMenuSchema = new mongoose.Schema({
-    archivoUrl: { type: String },
+    archivoUrl: { url: { type: String } },
     estado: { type: Boolean, default: 1 },
     createAT: { type: Date, default: Date.now },
 });

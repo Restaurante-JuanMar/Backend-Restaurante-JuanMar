@@ -28,72 +28,63 @@ const httpCarta = {
     }
   },
 
-  // Crear un nuevo archivo de la carta
-  crearCarta: async (req, res) => {
+  // Crear o actualizar el archivo de la carta
+    agregarOEditarCarta: async (req, res) => {
     try {
       const { archivoUrl } = req.body;
 
-      const carta = new Carta({ archivoUrl });
-      await carta.save();
-      res.json({ message: "Archivo de carta creado exitosamente", carta });
-    } catch (error) {
-      console.error("Error al crear el archivo de la carta:", error);
-      res.status(500).json({ error: error.message });
-    }
-  },
+      // Buscar si ya existe una carta
+      let carta = await Carta.findOne();
 
-  // Editar un archivo de la carta por ID
-  editarCarta: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { archivoUrl } = req.body;
-
-      const carta = await Carta.findByIdAndUpdate(
-        id,
-        { archivoUrl },
-        { new: true }
-      );
-
-      if (!carta) {
-        res.status(404).json({ message: "Archivo de carta no encontrado" });
+      if (carta) {
+        // Si existe, actualizar la carta
+        carta.archivoUrl = archivoUrl;
+        await carta.save();
+        res.json({
+          message: "Archivo de carta actualizado exitosamente",
+          carta,
+        });
       } else {
-        res.json({ message: "Archivo de carta actualizado exitosamente", carta });
+        // Si no existe, crear una nueva carta
+        carta = new Carta({ archivoUrl });
+        await carta.save();
+        res.json({ message: "Archivo de carta creado exitosamente", carta });
       }
     } catch (error) {
-      console.error("Error al editar el archivo de la carta:", error);
+      console.error("Error al gestionar el archivo de la carta:", error);
       res.status(500).json({ error: error.message });
     }
   },
 
-    //Put activar carta
-    putActivar: async (req, res) => {
-        try {
-          const { id } = req.params;
-          const carta = await Carta.findByIdAndUpdate(
-            id,
-            { estado: true },
-            { new: true }
-          );
-          res.json(carta);
-        } catch (error) {
-          res.status(500).json({ error });
-        }
-      },
-    
-      //Put inactivar carta
-      putInactivar: async (req, res) => {
-        try {
-          const { id } = req.params;
-          const carta = await Carta.findByIdAndUpdate(
-            id,
-            { estado: false },
-            { new: true }
-          );
-          res.json(carta);
-        } catch (error) {
-          res.status(500).json({ error });
-        }
-      },
+  //Put activar carta
+  putActivar: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const carta = await Carta.findByIdAndUpdate(
+        id,
+        { estado: true },
+        { new: true }
+      );
+      res.json(carta);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
+
+  //Put inactivar carta
+  putInactivar: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const carta = await Carta.findByIdAndUpdate(
+        id,
+        { estado: false },
+        { new: true }
+      );
+      res.json(carta);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  },
 };
 
 export default httpCarta;

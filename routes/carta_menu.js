@@ -23,22 +23,10 @@ router.get(
 router.post(
   "/registro",
   [
-    check("archivoUrl", "La URL del archivo es obligatoria").not().isEmpty(),
+    check("archivoUrl", "Seleccione un archivo, por favor").not().isEmpty(),
     validarCampos,
   ],
-  httpCarta.crearCarta
-);
-
-// Editar un archivo de la carta por ID
-router.put(
-  "/editar/:id",
-  [
-    check("id", "Ingrese un ID válido").not().isEmpty(),
-    check("id", "Ingrese un ID válido").isMongoId(),
-    check("archivoUrl", "La URL del archivo es obligatoria").not().isEmpty(),
-    validarCampos,
-  ],
-  httpCarta.editarCarta
+  httpCarta.agregarOEditarCarta
 );
 
 // Activar un archivo de la carta por ID
