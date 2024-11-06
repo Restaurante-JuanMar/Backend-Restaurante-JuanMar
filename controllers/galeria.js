@@ -28,39 +28,55 @@ const httpGaleria = {
     }
   },
 
-  // Crear una nueva imagen en la galería
-  crearGaleria: async (req, res) => {
+    // Obtener menús por posición
+    getByPosition: async (req, res) => {
+      try {
+        const galerias = await Galeria.find({
+          posicion: { $ne: null, $exists: true },
+        }).sort({ posicion: 1 });
+  
+        res.status(200).json(galerias);
+      } catch (error) {
+        console.error("Error al obtener la galería por posición:", error);
+        res.status(500).json({ error: error.message });
+      }
+    },
+
+    getByFecha: async (req, res) => {
+      try {
+        const galerias = await Galeria.find().sort({ fecha_gal: -1 });
+        res.status(200).json(galerias);
+      } catch (error) {
+        console.error("Error al obtener la galería por fecha:", error);
+        res.status(500).json({ error: error.message });
+      }
+    },
+
+  crearOActualizarGaleria: async (req, res) => {
     try {
-      const { imagen, descrip_gal, fecha_gal, posicion } = req.body;
+      const { nombre_gal, imagen, descrip_gal, fecha_gal, posicion } = req.body;
 
-      const galeria = new Galeria({ imagen, descrip_gal, fecha_gal, posicion });
-      await galeria.save();
-      res.json({ message: "Imagen de galería creada exitosamente", galeria });
-    } catch (error) {
-      console.error("Error al crear la imagen de la galería:", error);
-      res.status(500).json({ error: error.message });
-    }
-  },
+      // Buscar si ya existe un menú en esa posición
+      let galeria = await Galeria.findOne({ posicion });
 
-  // Editar una imagen de la galería por ID
-  editarGaleria: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const { imagen, descrip_gal, fecha_gal, posicion } = req.body;
-
-      const galeria = await Galeria.findByIdAndUpdate(
-        id,
-        { imagen, descrip_gal, fecha_gal, posicion },
-        { new: true }
-      );
-
-      if (!galeria) {
-        res.status(404).json({ message: "Imagen de galería no encontrada" });
+      if (galeria) {
+        // Si existe, actualizar el menú
+        galeria = await Galeria.findByIdAndUpdate(
+          galeria._id,
+          { nombre_gal, imagen, descrip_gal, fecha_gal, posicion },
+          { new: true }
+        );
+        res.json({ message: "Galería actualizada exitosamente", galeria });
       } else {
-        res.json({ message: "Imagen de galería actualizada exitosamente", galeria });
+        // Si no existe, crear un nuevo menú
+        galeria = new Galeria({
+          nombre_gal, imagen, descrip_gal, fecha_gal, posicion
+        });
+        await galeria.save();
+        res.json({ message: "Galería creada exitosamente", galeria });
       }
     } catch (error) {
-      console.error("Error al editar la imagen de la galería:", error);
+      console.error("Error al crear o actualizar la galería:", error);
       res.status(500).json({ error: error.message });
     }
   },

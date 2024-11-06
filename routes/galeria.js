@@ -8,6 +8,10 @@ const router = new Router();
 // Obtener todas las imágenes de la galería
 router.get("/all", httpGaleria.getAll);
 
+router.get("/fecha", httpGaleria.getByFecha);
+
+router.get("/posicion", httpGaleria.getByPosition);
+
 // Obtener una imagen de la galería por ID
 router.get(
   "/:id",
@@ -23,27 +27,14 @@ router.get(
 router.post(
   "/registro",
   [
-    check("imagen", "La imagen es obligatoria").not().isEmpty(),
-    check("descrip_gal", "La descripción es obligatoria").not().isEmpty(),
+    check("nombre_gal", "Digite el nombre del evento, por favor").not().isEmpty(),
+    check("posicion", "Escoja una posición de foto, por favor").not().isEmpty(),
     check("fecha_gal", "La fecha es obligatoria").not().isEmpty(),
     validarCampos,
   ],
-  httpGaleria.crearGaleria
+  httpGaleria.crearOActualizarGaleria
 );
 
-// Editar una imagen de la galería por ID
-router.put(
-  "/editar/:id",
-  [
-    check("id", "Ingrese un ID válido").not().isEmpty(),
-    check("id", "Ingrese un ID válido").isMongoId(),
-    check("imagen", "La imagen es obligatoria").not().isEmpty(),
-    check("descrip_gal", "La descripción es obligatoria").not().isEmpty(),
-    check("fecha_gal", "La fecha es obligatoria").not().isEmpty(),
-    validarCampos,
-  ],
-  httpGaleria.editarGaleria
-);
 
 // Activar una imagen de la galería por ID
 router.put(
