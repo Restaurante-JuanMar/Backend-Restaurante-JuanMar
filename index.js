@@ -12,6 +12,7 @@ import Galeria from "./routes/galeria.js";
 import ListadoPlato from "./routes/listado_platos.js";
 import PlatoEspecial from "./routes/plato_especial.js";
 import Reserva from "./routes/reserva.js";
+import TrabajaConNosotros from './routes/trabaja_nosotros.js';
 
 const app = express();
 const port = process.env.PORT;
@@ -29,6 +30,7 @@ app.use("/api/galeria", Galeria);
 app.use("/api/listado-plato", ListadoPlato);
 app.use("/api/plato-especial", PlatoEspecial);
 app.use("/api/reserva", Reserva);
+app.use("/api/trabaja-con-nosotros", TrabajaConNosotros);
 
 const server = http.createServer(app);
 
