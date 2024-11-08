@@ -10,7 +10,7 @@ const pqrSchema = new mongoose.Schema({
   tipoPqr: { type: String, required: true },        
   asunto: { type: String, required: true },
   descripcion: { type: String, required: true },
-  archivoUrl: { type: String },
+  archivoUrl: { url: { type: String } },
   estado: { type: Boolean, default: 1 },
   createdAt: { type: Date, default: Date.now }
 });
