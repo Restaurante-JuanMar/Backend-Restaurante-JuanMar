@@ -13,6 +13,9 @@ import ListadoPlato from "./routes/listado_platos.js";
 import PlatoEspecial from "./routes/plato_especial.js";
 import Reserva from "./routes/reserva.js";
 import TrabajaConNosotros from './routes/trabaja_nosotros.js';
+import Mision from './routes/mision.js';
+import Vision from './routes/vision.js';
+import ValoresCorporativos from './routes/valores_corporativos.js';
 
 const app = express();
 const port = process.env.PORT;
@@ -31,6 +34,9 @@ app.use("/api/listado-plato", ListadoPlato);
 app.use("/api/plato-especial", PlatoEspecial);
 app.use("/api/reserva", Reserva);
 app.use("/api/trabaja-con-nosotros", TrabajaConNosotros);
+app.use("/api/mision", Mision);
+app.use("/api/vision", Vision);
+app.use("/api/valores-corporativos", ValoresCorporativos);
 
 const server = http.createServer(app);
 

@@ -40,12 +40,7 @@ const httpPlatoEspecial = {
       });
 
       await newPlato.save();
-      res
-        .status(201)
-        .json({
-          message: "Plato especial creado exitosamente",
-          plato: newPlato,
-        });
+      res.json(newPlato);
     } catch (error) {
       console.error("Error al crear el plato especial:", error);
       res.status(500).json({ error: error.message });
@@ -67,10 +62,7 @@ const httpPlatoEspecial = {
       if (!updatedPlato) {
         res.status(404).json({ message: "Plato especial no encontrado" });
       } else {
-        res.json({
-          message: "Plato especial actualizado exitosamente",
-          plato: updatedPlato,
-        });
+        res.json(updatedPlato);
       }
     } catch (error) {
       console.error("Error al actualizar el plato especial:", error);
