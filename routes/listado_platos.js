@@ -24,8 +24,6 @@ router.post(
   "/registro",
   [
     check("archivoUrl", "El archivo es obligatorio").not().isEmpty(),
-    check("idReserva", "El ID de la reserva es obligatorio").not().isEmpty(),
-    check("idReserva", "Ingrese un  ID de reserva válido").isMongoId(),
     validarCampos,
   ],
   httpListadoPlatos.crearListadoPlato

@@ -1,4 +1,5 @@
 import Reserva from "../models/reserva.js";
+import ListadoPlatos from "../models/listado_platos.js";
 
 const httpReserva = {
   // Obtener todas las reservas
@@ -35,7 +36,6 @@ const httpReserva = {
         nombre_cliente,
         apellido_cliente,
         correo_cliente,
-        cedula_cliente,
         telefono_cliente,
         telefono_cliente2,
         num_personas,
@@ -47,7 +47,6 @@ const httpReserva = {
         nombre_cliente,
         apellido_cliente,
         correo_cliente,
-        cedula_cliente,
         telefono_cliente,
         telefono_cliente2,
         num_personas,
@@ -70,7 +69,6 @@ const httpReserva = {
         nombre_cliente,
         apellido_cliente,
         correo_cliente,
-        cedula_cliente,
         telefono_cliente,
         telefono_cliente2,
         num_personas,
@@ -85,7 +83,6 @@ const httpReserva = {
           nombre_cliente,
           apellido_cliente,
           correo_cliente,
-          cedula_cliente,
           telefono_cliente,
           telefono_cliente2,
           num_personas,
@@ -111,10 +108,27 @@ const httpReserva = {
   putAprobar: async (req, res) => {
     try {
       const { id } = req.params;
+      let identificador;
+      let unique = false;
 
-      // Genera un número aleatorio de 5 dígitos y lo concatena con "2024" para el identificador
-      const identificador = `2024${Math.floor(10000 + Math.random() * 90000)}`;
+      // Obtener el año actual dinámicamente
+      const currentYear = new Date().getFullYear();
 
+      // Generar un identificador único
+      while (!unique) {
+        // Genera un número aleatorio de 5 dígitos y lo concatena con el año actual
+        identificador = `${currentYear}${Math.floor(
+          10000 + Math.random() * 90000
+        )}`;
+
+        // Verificar si el identificador ya existe en otra reserva
+        const existingReserva = await Reserva.findOne({ identificador });
+        if (!existingReserva) {
+          unique = true; // Si no existe, el identificador es único
+        }
+      }
+
+      // Actualizar la reserva con el identificador único
       const reserva = await Reserva.findByIdAndUpdate(
         id,
         { aprobado: true, identificador },
@@ -122,10 +136,10 @@ const httpReserva = {
       );
 
       if (!reserva) {
-        res.status(404).json({ message: "Reserva no encontrada" });
-      } else {
-        res.json({ message: "Reserva aprobada exitosamente", reserva });
+        return res.status(404).json({ message: "Reserva no encontrada" });
       }
+
+      res.json({ message: "Reserva aprobada exitosamente", reserva });
     } catch (error) {
       console.error("Error al aprobar la reserva:", error);
       res.status(500).json({ error: error.message });
@@ -147,18 +161,39 @@ const httpReserva = {
     }
   },
 
-  // Inactivar una reserva
+  // Inactivar una reserva y también inactivar el documento de ListadoPlatos asociado (si solo existe uno)
   putInactivar: async (req, res) => {
     try {
       const { id } = req.params;
+
+      // Inactivar la reserva
       const reserva = await Reserva.findByIdAndUpdate(
         id,
         { estado: false },
         { new: true }
       );
-      res.json(reserva);
+
+      if (!reserva) {
+        return res.status(404).json({ message: "Reserva no encontrada" });
+      }
+
+      // Inactivar el documento de ListadoPlatos asociado a esta reserva
+      await ListadoPlatos.findOneAndUpdate(
+        { idReserva: id },
+        { estado: false }
+      );
+
+      res.json({
+        message:
+          "Reserva y documento de listado de platos asociado inactivados exitosamente",
+        reserva,
+      });
     } catch (error) {
-      res.status(500).json({ error });
+      console.error(
+        "Error al inactivar la reserva y el documento de listado de platos asociado:",
+        error
+      );
+      res.status(500).json({ error: error.message });
     }
   },
 };
