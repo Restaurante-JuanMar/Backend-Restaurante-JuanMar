@@ -1,7 +1,24 @@
 import bcryptjs from "bcryptjs";
 import Administrador from "../models/administrador.js";
 import helpersGeneral from "../helpers/generales.js";
+import nodemailer from "nodemailer";
 import { generarJWT } from "../middlewares/validar-jwt.js";
+
+let codigoEnviado = {};
+
+function generarNumeroAleatorio() {
+  let primerDigito = Math.floor(Math.random() * 9) + 1;
+  
+  let restoNumero = Math.floor(Math.random() * 100000).toString().padStart(5, "0");
+  
+  let numero = primerDigito + restoNumero;
+  
+  let fechaCreacion = new Date();
+  codigoEnviado = { codigo: numero, fechaCreacion };
+
+  return numero;
+}
+
 
 const httpAdministrador = {
   //Get all administradores
@@ -115,6 +132,162 @@ const httpAdministrador = {
       res.json(administrador);
     } catch (error) {
       res.status(500).json({ error });
+    }
+  },
+
+  codigoRecuperar: async (req, res) => {
+    try {
+      const { correo } = req.params;
+
+      const codigo = generarNumeroAleatorio();
+
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.userEmail,
+          pass: process.env.password,
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.userEmail,
+        to: correo,
+        subject: "Recuperación de Contraseña",
+        text: "Tu código para restablecer tu contraseña es: " + codigo,
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({
+            success: false,
+            error: "Error al enviar el correo electrónico.",
+          });
+        } else {
+          console.log("Correo electrónico enviado: " + info.response);
+          res.json({
+            success: true,
+            msg: "Correo electrónico enviado con éxito.",
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ error });
+    }
+  },
+
+  confirmarCodigo: async (req, res) => {
+    try {
+      const { codigo } = req.params;
+
+      if (!codigoEnviado) {
+        return res.status(400).json({ error: "Código no generado" });
+      }
+
+      const { codigo: codigoGuardado, fechaCreacion } = codigoEnviado;
+      const tiempoExpiracion = 30; // Tiempo de expiración en minutos
+
+      const tiempoActual = new Date();
+      const tiempoDiferencia = tiempoActual - new Date(fechaCreacion);
+      const minutosDiferencia = tiempoDiferencia / (1000 * 60);
+
+      if (minutosDiferencia > tiempoExpiracion) {
+        return res.status(400).json({ error: "El código ha expirado" });
+      }
+
+      if (codigo == codigoGuardado) {
+        return res.json({ msg: "Código correcto" });
+      }
+
+      return res.status(400).json({ error: "Código incorrecto" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        error: "Error, hable con el WebMaster",
+      });
+    }
+  },
+
+  nuevaPassword: async (req, res) => {
+    try {
+      const { codigo, password } = req.body;
+
+      const { codigo: codigoGuardado, fechaCreacion } = codigoEnviado;
+      const tiempoExpiracion = 30; // Tiempo de expiración en minutos
+
+      const tiempoActual = new Date();
+      const tiempoDiferencia = tiempoActual - new Date(fechaCreacion);
+      const minutosDiferencia = tiempoDiferencia / (1000 * 60);
+
+      if (minutosDiferencia > tiempoExpiracion) {
+        return res.status(400).json({ error: "El código ha expirado" });
+      }
+
+      if (codigo == codigoGuardado) {
+        codigoEnviado = {};
+
+        const administrador = req.AdministradorUpdate;
+
+        const salt = bcryptjs.genSaltSync();
+        const newPassword = bcryptjs.hashSync(password, salt);
+
+        await Administrador.findByIdAndUpdate(
+          administrador.id,
+          { password: newPassword },
+          { new: true }
+        );
+
+        return res
+          .status(200)
+          .json({ msg: "Contraseña actualizada con éxito" });
+      }
+
+      return res.status(400).json({ error: "Código incorrecto" });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+        error: "Error, hable con el WebMaster",
+      });
+    }
+  },
+
+  putCambioPassword: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { password, newPassword } = req.body;
+      const administrador = await Administrador.findById(id);
+
+      if (!administrador) {
+        return res.status(404).json({ error: "Administrador no encontrado" });
+      }
+
+      const passAnterior = administrador.password;
+
+      const validPassword = bcryptjs.compareSync(
+        String(password),
+        String(passAnterior)
+      );
+
+      if (!validPassword) {
+        return res.status(401).json({ error: "Contraseña actual incorrecta" });
+      }
+
+      const salt = bcryptjs.genSaltSync();
+      const cryptNewPassword = bcryptjs.hashSync(newPassword, salt);
+
+      await Administrador.findByIdAndUpdate(
+        administrador.id,
+        { password: cryptNewPassword },
+        { new: true }
+      );
+
+      return res.status(200).json({ msg: "Contraseña actualizada con éxito" });
+    } catch (error) {
+      console.log(error);
+      return res
+        .status(500)
+        .json({ msgError: "Error interno del servidor", error });
     }
   },
 
