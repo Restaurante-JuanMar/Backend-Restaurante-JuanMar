@@ -94,26 +94,56 @@ const httpReserva = {
       const enviarCorreoCliente = {
         from: process.env.userEmail,
         to: correo_cliente,
-        subject: "Hemos recibido tu solicitud de reserva en JuanMar",
+        subject: "Detalles de tu reserva en JuanMar",
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; padding: 20px;">
+              <!-- Logo con fondo -->
               <div style="background-color: #fe6f61; text-align: center; padding: 10px;">
                   <img src="https://restaurante-juanmar.vercel.app/assets/logo_sin_fondo-CC7Frmyr.png" alt="Logo de JuanMar" style="max-width: 100px;">
               </div>
-              <h2 style="color: #E53935;">¡Gracias por tu solicitud, ${nombre_cliente}!</h2>
-              <p>Hemos recibido tu solicitud de reserva. Nos pondremos en contacto para confirmar los detalles.</p>
-              <p style="font-size: 14px;color: #000000;font-weight: bold"><strong>Detalles de tu solicitud:</strong></p>
+              
+              <!-- Mensaje de inicio -->
+              <h2 style="color: #E53935;">¡Gracias por elegir a JuanMar!</h2>
+              <p>
+                ¡Gracias por elegir a <strong>JuanMar</strong> para tu próxima experiencia gastronómica!
+                Nos complace confirmar tu reserva. A continuación, te compartimos algunos detalles importantes
+                para asegurar que tu visita sea perfecta.
+              </p>
+              
+              <!-- Detalles de la reserva -->
+              <p style="font-size: 14px; color: #000000; font-weight: bold;"><strong>Detalles de tu reserva:</strong></p>
               <p>Nombre: ${nombre_cliente} ${apellido_cliente}</p>
               <p>Correo: ${correo_cliente}</p>
               <p>Teléfono: ${telefono_cliente}</p>
-              <p>Teléfono secundario: ${
-                telefono_cliente2 || "No proporcionado"
-              }</p>
+              <p>Teléfono secundario: ${telefono_cliente2 || "No proporcionado"}</p>
               <p>Número de personas: ${num_personas}</p>
               <p>Fecha solicitada: ${fechaReservaFormateada}</p>
               <p>Mensaje: ${mensaje_res || "Sin mensaje adicional"}</p>
-              <p>Fecha de recepción: ${fechaFormateada}</p>
-              <p style="color: #E53935; font-size: 14px;">Recibirás una confirmación oficial tan pronto como validemos los detalles de tu reserva.</p>
+              
+              <!-- Instrucciones adicionales -->
+              <h3 style="color: #E53935; margin-top: 20px;">Información importante:</h3>
+              <ol style="font-size: 14px; line-height: 1.6;">
+                <li>
+                  <strong>Información para grupos grandes:</strong> Si tu reserva es para un grupo grande, 
+                  te agradeceríamos que recuerdes el envío de la lista con los platos que deseas tener listos a tu llegada. 
+                  Esto nos ayudará a garantizar que todo esté preparado y disponible para ti.
+                </li>
+                <li>
+                  <strong>Opciones de pago:</strong> Aceptamos pagos a través de <strong>Nequi</strong> y <strong>Bancolombia</strong>. 
+                  Por favor, indícanos tu preferencia para facilitar el proceso.
+                </li>
+                <li>
+                  <strong>Política de cancelación:</strong> Si no puedes asistir a tu reserva, te pedimos que la canceles 
+                  con al menos <strong>5 horas de anticipación</strong>. Esto nos permitirá ofrecer el espacio a otros clientes 
+                  y mejorar nuestro servicio.
+                </li>
+              </ol>
+      
+              <!-- Mensaje final -->
+              <p style="margin-top: 20px;">
+                Estamos comprometidos a brindarte una experiencia memorable. Si tienes alguna pregunta o necesitas asistencia 
+                adicional, no dudes en ponerte en contacto con nosotros. ¡Estamos ansiosos por recibirte!
+              </p>
           </div>
         `,
       };
@@ -132,16 +162,14 @@ const httpReserva = {
               <p>Nombre cliente: ${nombre_cliente} ${apellido_cliente}</p>
               <p>Correo cliente: ${correo_cliente}</p>
               <p>Teléfono cliente: <a href="https://wa.me/57${telefono_cliente}">${telefono_cliente}</a></p>
-              <p>Teléfono secundario: ${
-                telefono_cliente2
-                  ? `<a href="https://wa.me/57${telefono_cliente2}">${telefono_cliente2}</a>`
-                  : "No proporcionado"
-              }</p>
+              <p>Teléfono secundario: ${telefono_cliente2
+            ? `<a href="https://wa.me/57${telefono_cliente2}">${telefono_cliente2}</a>`
+            : "No proporcionado"
+          }</p>
               <p>Número de personas: ${num_personas}</p>
               <p>Fecha solicitada: ${fechaReservaFormateada}</p>
-              <p>Mensaje del cliente: ${
-                mensaje_res || "Sin mensaje adicional"
-              }</p>
+              <p>Mensaje del cliente: ${mensaje_res || "Sin mensaje adicional"
+          }</p>
               <p>Reserva enviada el: ${fechaFormateada}</p>
               <p style="font-size: 14px; color: #E53935; font-weight: bold;">
                   Por favor, revisa esta solicitud y confirma la reserva si es posible.
